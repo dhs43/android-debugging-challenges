@@ -3,6 +3,7 @@ package com.codepath.debuggingchallenges.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.codepath.debuggingchallenges.R;
 import com.codepath.debuggingchallenges.adapters.MoviesAdapter;
@@ -29,8 +30,11 @@ public class MoviesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_movies);
         rvMovies = findViewById(R.id.rvMovies);
+        movies = new ArrayList<>();
+        adapter = new MoviesAdapter(movies);
 
         // Create the adapter to convert the array to views
         MoviesAdapter adapter = new MoviesAdapter(movies);
@@ -38,21 +42,26 @@ public class MoviesActivity extends AppCompatActivity {
         // Attach the adapter to a ListView
         rvMovies.setAdapter(adapter);
 
+        Log.d("plain", "12345");
+
         fetchMovies();
     }
 
 
     private void fetchMovies() {
-        String url = " https://api.themoviedb.org/3/movie/now_playing?api_key=";
+        String url = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
         AsyncHttpClient client = new AsyncHttpClient();
         client.get(url, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     JSONArray moviesJson = response.getJSONArray("results");
-                    movies = Movie.fromJSONArray(moviesJson);
+                    movies.addAll(Movie.fromJSONArray(moviesJson));
+                    adapter.notifyDataSetChanged();
+                    Log.d("plain", "hereitis");
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.d("plain", "NOPE");
                 }
             }
         });
