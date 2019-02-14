@@ -1,20 +1,24 @@
 package com.codepath.debuggingchallenges.models;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Movie {
     private String title;
     private String posterUrl;
     private double rating;
 
+
     public Movie(JSONObject jsonObject) throws JSONException {
-        this.posterUrl = jsonObject.getString("poster_path");
-        this.title = jsonObject.getString("original-title");
-        this.rating = jsonObject.getDouble("vote_average");
+        posterUrl = jsonObject.getString("poster_path");
+        title = jsonObject.getString("original_title");
+        rating = jsonObject.getDouble("vote_average");
     }
 
     public String getTitle() {
@@ -26,11 +30,12 @@ public class Movie {
     }
 
     public String getPosterUrl() {
+        Log.d("random", "things");
         return String.format("https://image.tmdb.org/t/p/w342/%s", posterUrl);
     }
 
-    public static ArrayList<Movie> fromJSONArray(JSONArray jsonArray) {
-        ArrayList<Movie> results = new ArrayList<>();
+    public static List<Movie> fromJSONArray(JSONArray jsonArray) {
+        List<Movie> results = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 results.add(new Movie(jsonArray.getJSONObject(i)));

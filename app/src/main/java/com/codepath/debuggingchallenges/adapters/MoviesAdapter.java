@@ -5,10 +5,10 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +20,13 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
 
-    private List<Movie> movies;
+    Context context;
+    List<Movie> movies;
+
+    public MoviesAdapter(Context context, List<Movie> movies){
+        this.context = context;
+        this.movies = movies;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         // only needed because we need to set the background color
@@ -34,6 +40,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
 
+            Log.d("thishere", "zero");
             view = itemView;
             tvName = itemView.findViewById(R.id.tvTitle);
             tvRating = itemView.findViewById(R.id.tvRating);
@@ -47,7 +54,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return 0;
+        return movies.size();
     }
 
     @NonNull
@@ -57,33 +64,33 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View movieView = inflater.inflate(R.layout.item_movie, parent, false);
-
+        View movieView = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false);
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(movieView);
-        return viewHolder;
+        //ViewHolder viewHolder = new ViewHolder(movieView);
+        return new ViewHolder(movieView);
     }
 
     @Override
-    public void onBindViewHolder(MoviesAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         Movie movie = movies.get(position);
 
         // Populate the data into the template view using the data object
-        viewHolder.tvName.setText(movie.getTitle());
+        holder.tvName.setText(movie.getTitle());
+        Log.d("thishere", "first");
+        Log.d("thishere", holder.tvName.getText().toString());
 
-        Resources resources = viewHolder.tvName.getResources();
+        Resources resources = holder.tvName.getResources();
         double movieRating = movie.getRating();
 
         if (movieRating > 6) {
-            viewHolder.view.setBackgroundColor(Color.GREEN);
+            holder.view.setBackgroundColor(Color.GREEN);
         }
 
         String ratingText = String.format(resources.getString(R.string.rating), movieRating);
-        viewHolder.tvRating.setText(ratingText);
+        holder.tvRating.setText(ratingText);
 
-        Glide.with(viewHolder.ivPoster.getContext()).load(movie.getPosterUrl()).into(
-                viewHolder.ivPoster);
-
+        Glide.with(holder.ivPoster.getContext()).load(movie.getPosterUrl()).into(
+                holder.ivPoster);
     }
 }
